@@ -4,7 +4,7 @@ Gif News combines the top 20 popular news articles of the day from the NYTimes w
 
 # APIs
 * [New york times](http://developer.nytimes.com/docs) for the articles
-* [Giphy for gifs](https://github.com/Giphy/GiphyAPI)
+* [Giphy](https://github.com/Giphy/GiphyAPI) for gifs
 * [AlchemyAPI](http://www.alchemyapi.com/) for keyword extraction
 
 Made with Giggles by [Maozillah](http://maozillah.com/)
