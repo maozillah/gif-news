@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giphy x NYTIMES</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/foundation.css') }}" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/app.css') }}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  </head>
+  <body>
+
+  <section id="app"></section>
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+   <script type="text/babel">
+
+var ArticleImg = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <img src={this.props.gif_url}/>
+      </div>
+      );
+  }
+});
+
+var ArticleMeta = React.createClass({
+  render: function() {
+    var words = this.props.keywords.replace(/\w\S*/g, function(txt){return "#" + txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+
+    return (
+      <div>
+      <span><em>{words}</em></span>
+        <h1><a href={this.props.articleUrl} target="_blank">{this.props.title}</a></h1>
+        <p>{this.props.abstract}</p>
+        <br/>
+      </div>
+      );
+  }
+});
+
+var Article = React.createClass({
+  render: function() {
+  var listing = [];
+
+    this.props.articles.forEach(function(article, i) {
+      listing.push(
+      <div>
+        <div className="masonryGrid">
+        <ArticleImg img_url={article.img_url} gif_url={article.gif_url}/>
+
+        <div className="description">
+        <ArticleMeta title={article.title} abstract={article.abstract} keywords={article.tag} articleUrl={article.url} />
+        </div>
+        </div>
+      </div>
+        );
+    });
+
+    return (
+      <div>
+        {listing}
+      </div>
+    );
+  }
+});
+
+var ArticleList = React.createClass({
+   loadData: function() {
+      $.ajax({
+      url: "/data",
+      dataType: 'json',
+
+      success: function(data) {
+        // console.log(data);
+        this.setState({data: data.children});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+      });
+    },
+  getInitialState: function() {
+      return {data: []};
+    },
+  componentDidMount: function() {
+    this.loadData();
+    // setInterval(this.loadInstagram, 3000);
+  },
+  render: function() {
+    return (
+     <div>
+
+        <div className="top-bar">
+            <div className="row">
+                <div className="large-12 columns">
+                    <img src="{{ url_for('static',filename='img/logo.png') }}" className="logo"/>
+                </div>
+            </div>
+        </div>
+
+        <div className="row">
+            <div className="large-12 columns">
+                <div id="container">
+                    <Article articles={this.state.data} />
+                </div>
+            </div>
+        </div>
+
+        <div className="footer">
+            <div className="row">
+                <div className="large-12 columns">
+                    <div className="large-6 columns">
+                    <h1><strong>About</strong></h1>
+                    <p>Gif News combines the top 20 popular news articles of the day from the NYTimes with its relevant gif from Giphy. It's meant to poke fun at the idea that people nowadays have limited attention spans and no longer read long articles, spawning the birth of 'tldr;' or 'too long don't read'. </p>
+                     </div>
+
+                    <div className="large-2 columns">
+                    <h1>Share</h1>
+
+                    <i className="fa fa-facebook-square fa-2x"></i>
+                    <i className="fa fa-twitter-square fa-2x"></i>
+                    </div>
+
+                    <div className="large-4 columns">
+                    <h1>Deets</h1>
+                    <p>Powered by <a href="https://github.com/Giphy/GiphyAPI" target="_blank">Giphy</a> x <a href="http://developer.nytimes.com/docs" target="_blank">NYTimes</a> x <a href="http://www.alchemyapi.com/" target="_blank">AlchemyAPI</a></p>
+                    <p>Made with <strong>Giggles</strong> by <a href="http://maozillah.com/" target="_blank">Maozillah</a></p>
+                    </div>
+
+                  
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    );
+  }
+});
+
+ReactDOM.render(
+  <ArticleList />,
+  document.getElementById('app')
+);
+  </script>
+
+
+</body>
+</html>
